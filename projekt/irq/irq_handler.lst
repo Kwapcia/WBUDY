@@ -1,0 +1,453 @@
+ARM GAS  C:\Users\embedded\AppData\Local\Temp\ccyyUmh5.s 			page 1
+
+
+   1              		.cpu arm7tdmi
+   2              		.eabi_attribute 20, 1
+   3              		.eabi_attribute 21, 1
+   4              		.eabi_attribute 23, 3
+   5              		.eabi_attribute 24, 1
+   6              		.eabi_attribute 25, 1
+   7              		.eabi_attribute 26, 1
+   8              		.eabi_attribute 30, 6
+   9              		.eabi_attribute 34, 0
+  10              		.eabi_attribute 18, 4
+  11              		.file	"irq_handler.c"
+  12              		.text
+  13              	.Ltext0:
+  14              		.cfi_sections	.debug_frame
+  15              		.comm	timeTwo,4,4
+  16              		.align	2
+  17              		.global	IRQ_Test
+  18              		.syntax unified
+  19              		.arm
+  20              		.fpu softvfp
+  21              		.type	IRQ_Test, %function
+  22              	IRQ_Test:
+  23              	.LFB0:
+  24              		.file 1 "irq_handler.c"
+   1:irq_handler.c **** /*************************************************************************************
+   2:irq_handler.c ****  *
+   3:irq_handler.c ****  * @Description:
+   4:irq_handler.c ****  * Przykładowa procedura obsługi przerwania dostosowania do 
+   5:irq_handler.c ****  * obsługi przerwań wektoryzowanych.
+   6:irq_handler.c ****  * Procedura ta przełącza stan diody P0.9.
+   7:irq_handler.c ****  * 
+   8:irq_handler.c ****  * 
+   9:irq_handler.c ****  * @Authors: Michał Morawski, 
+  10:irq_handler.c ****  *           Daniel Arendt, 
+  11:irq_handler.c ****  *           Przemysław Ignaciuk,
+  12:irq_handler.c ****  *           Marcin Kwapisz
+  13:irq_handler.c ****  *
+  14:irq_handler.c ****  * @Change log:
+  15:irq_handler.c ****  *           2016.12.01: Wersja oryginalna.
+  16:irq_handler.c ****  *
+  17:irq_handler.c ****  ******************************************************************************/
+  18:irq_handler.c **** 
+  19:irq_handler.c **** #include "../general.h"
+  20:irq_handler.c **** #include <lpc2xxx.h>
+  21:irq_handler.c **** #include "irq_handler.h"
+  22:irq_handler.c **** #include "../timer.h"
+  23:irq_handler.c **** #include "../Common_Def.h"
+  24:irq_handler.c **** 
+  25:irq_handler.c **** 
+  26:irq_handler.c **** void IRQ_Test(void)
+  27:irq_handler.c **** {
+  25              		.loc 1 27 0
+  26              		.cfi_startproc
+  27              		@ Interrupt Service Routine.
+  28              		@ args = 0, pretend = 0, frame = 0
+  29              		@ frame_needed = 1, uses_anonymous_args = 0
+  30              		@ link register save eliminated.
+ARM GAS  C:\Users\embedded\AppData\Local\Temp\ccyyUmh5.s 			page 2
+
+
+  31 0000 0C082DE9 		push	{r2, r3, fp}
+  32              	.LCFI0:
+  33              		.cfi_def_cfa_offset 12
+  34              		.cfi_offset 2, -12
+  35              		.cfi_offset 3, -8
+  36              		.cfi_offset 11, -4
+  37 0004 08B08DE2 		add	fp, sp, #8
+  38              	.LCFI1:
+  39              		.cfi_def_cfa 11, 4
+  28:irq_handler.c **** 	if (TIMER_MR0_INT & T1IR)
+  40              		.loc 1 28 0
+  41 0008 84309FE5 		ldr	r3, .L4
+  42 000c 003093E5 		ldr	r3, [r3]
+  43 0010 013003E2 		and	r3, r3, #1
+  44 0014 000053E3 		cmp	r3, #0
+  45 0018 0B00000A 		beq	.L2
+  29:irq_handler.c ****     {
+  30:irq_handler.c **** 		IOCLR1 = DIODA_PRAWA;         // (1 << 17)
+  46              		.loc 1 30 0
+  47 001c 74309FE5 		ldr	r3, .L4+4
+  48 0020 0228A0E3 		mov	r2, #131072
+  49 0024 002083E5 		str	r2, [r3]
+  31:irq_handler.c ****         T1IR   = TIMER_MR0_INT;       // Informacja dla Timera #1,
+  50              		.loc 1 31 0
+  51 0028 64309FE5 		ldr	r3, .L4
+  52 002c 0120A0E3 		mov	r2, #1
+  53 0030 002083E5 		str	r2, [r3]
+  32:irq_handler.c **** 	                                  // że jego przerwanie zostało obsłużone.
+  33:irq_handler.c ****         timeTwo++;
+  54              		.loc 1 33 0
+  55 0034 60309FE5 		ldr	r3, .L4+8
+  56 0038 003093E5 		ldr	r3, [r3]
+  57 003c 013083E2 		add	r3, r3, #1
+  58 0040 54209FE5 		ldr	r2, .L4+8
+  59 0044 003082E5 		str	r3, [r2]
+  60 0048 0A0000EA 		b	.L3
+  61              	.L2:
+  34:irq_handler.c ****     }
+  35:irq_handler.c ****     else if (TIMER_MR1_INT & T1IR)
+  62              		.loc 1 35 0
+  63 004c 40309FE5 		ldr	r3, .L4
+  64 0050 003093E5 		ldr	r3, [r3]
+  65 0054 023003E2 		and	r3, r3, #2
+  66 0058 000053E3 		cmp	r3, #0
+  67 005c 0500000A 		beq	.L3
+  36:irq_handler.c ****     {
+  37:irq_handler.c ****         IOSET1 = DIODA_PRAWA;         // (1 << 17)
+  68              		.loc 1 37 0
+  69 0060 38309FE5 		ldr	r3, .L4+12
+  70 0064 0228A0E3 		mov	r2, #131072
+  71 0068 002083E5 		str	r2, [r3]
+  38:irq_handler.c ****         T1IR   = TIMER_MR1_INT;       // Informacja dla Timera #1,
+  72              		.loc 1 38 0
+  73 006c 20309FE5 		ldr	r3, .L4
+  74 0070 0220A0E3 		mov	r2, #2
+  75 0074 002083E5 		str	r2, [r3]
+  76              	.L3:
+ARM GAS  C:\Users\embedded\AppData\Local\Temp\ccyyUmh5.s 			page 3
+
+
+  39:irq_handler.c **** 	                                  // że jego przerwanie zostało obsłużone.
+  40:irq_handler.c ****     }
+  41:irq_handler.c ****     VICVectAddr = 0;                  // End of Interrupt -> informacja dla
+  77              		.loc 1 41 0
+  78 0078 24309FE5 		ldr	r3, .L4+16
+  79 007c 0020A0E3 		mov	r2, #0
+  80 0080 002083E5 		str	r2, [r3]
+  42:irq_handler.c ****                                       // kontrolera przerwań
+  43:irq_handler.c **** }
+  81              		.loc 1 43 0
+  82 0084 0000A0E1 		nop
+  83 0088 08D04BE2 		sub	sp, fp, #8
+  84              	.LCFI2:
+  85              		.cfi_def_cfa 13, 12
+  86              		@ sp needed
+  87 008c 0C08BDE8 		pop	{r2, r3, fp}
+  88              	.LCFI3:
+  89              		.cfi_restore 11
+  90              		.cfi_restore 3
+  91              		.cfi_restore 2
+  92              		.cfi_def_cfa_offset 0
+  93 0090 04F05EE2 		subs	pc, lr, #4
+  94              	.L5:
+  95              		.align	2
+  96              	.L4:
+  97 0094 008000E0 		.word	-536838144
+  98 0098 1C8002E0 		.word	-536707044
+  99 009c 00000000 		.word	timeTwo
+ 100 00a0 148002E0 		.word	-536707052
+ 101 00a4 30F0FFFF 		.word	-4048
+ 102              		.cfi_endproc
+ 103              	.LFE0:
+ 104              		.size	IRQ_Test, .-IRQ_Test
+ 105              	.Letext0:
+ 106              		.file 2 "irq_handler.h"
+ 107              		.section	.debug_info,"",%progbits
+ 108              	.Ldebug_info0:
+ 109 0000 82000000 		.4byte	0x82
+ 110 0004 0200     		.2byte	0x2
+ 111 0006 00000000 		.4byte	.Ldebug_abbrev0
+ 112 000a 04       		.byte	0x4
+ 113 000b 01       		.uleb128 0x1
+ 114 000c 3B000000 		.4byte	.LASF7
+ 115 0010 0C       		.byte	0xc
+ 116 0011 F2000000 		.4byte	.LASF8
+ 117 0015 00010000 		.4byte	.LASF9
+ 118 0019 00000000 		.4byte	.Ltext0
+ 119 001d A8000000 		.4byte	.Letext0
+ 120 0021 00000000 		.4byte	.Ldebug_line0
+ 121 0025 02       		.uleb128 0x2
+ 122 0026 01       		.byte	0x1
+ 123 0027 08       		.byte	0x8
+ 124 0028 B3000000 		.4byte	.LASF0
+ 125 002c 02       		.uleb128 0x2
+ 126 002d 02       		.byte	0x2
+ 127 002e 07       		.byte	0x7
+ 128 002f D3000000 		.4byte	.LASF1
+ARM GAS  C:\Users\embedded\AppData\Local\Temp\ccyyUmh5.s 			page 4
+
+
+ 129 0033 02       		.uleb128 0x2
+ 130 0034 04       		.byte	0x4
+ 131 0035 07       		.byte	0x7
+ 132 0036 17000000 		.4byte	.LASF2
+ 133 003a 02       		.uleb128 0x2
+ 134 003b 08       		.byte	0x8
+ 135 003c 07       		.byte	0x7
+ 136 003d 24000000 		.4byte	.LASF3
+ 137 0041 02       		.uleb128 0x2
+ 138 0042 01       		.byte	0x1
+ 139 0043 06       		.byte	0x6
+ 140 0044 E6000000 		.4byte	.LASF4
+ 141 0048 02       		.uleb128 0x2
+ 142 0049 02       		.byte	0x2
+ 143 004a 05       		.byte	0x5
+ 144 004b C1000000 		.4byte	.LASF5
+ 145 004f 03       		.uleb128 0x3
+ 146 0050 04       		.byte	0x4
+ 147 0051 05       		.byte	0x5
+ 148 0052 696E7400 		.ascii	"int\000"
+ 149 0056 02       		.uleb128 0x2
+ 150 0057 08       		.byte	0x8
+ 151 0058 05       		.byte	0x5
+ 152 0059 00000000 		.4byte	.LASF6
+ 153 005d 04       		.uleb128 0x4
+ 154 005e CB000000 		.4byte	.LASF10
+ 155 0062 02       		.byte	0x2
+ 156 0063 19       		.byte	0x19
+ 157 0064 33000000 		.4byte	0x33
+ 158 0068 01       		.byte	0x1
+ 159 0069 05       		.byte	0x5
+ 160 006a 03       		.byte	0x3
+ 161 006b 00000000 		.4byte	timeTwo
+ 162 006f 05       		.uleb128 0x5
+ 163 0070 01       		.byte	0x1
+ 164 0071 0E000000 		.4byte	.LASF11
+ 165 0075 01       		.byte	0x1
+ 166 0076 1A       		.byte	0x1a
+ 167 0077 01       		.byte	0x1
+ 168 0078 00000000 		.4byte	.LFB0
+ 169 007c A8000000 		.4byte	.LFE0
+ 170 0080 00000000 		.4byte	.LLST0
+ 171 0084 01       		.byte	0x1
+ 172 0085 00       		.byte	0
+ 173              		.section	.debug_abbrev,"",%progbits
+ 174              	.Ldebug_abbrev0:
+ 175 0000 01       		.uleb128 0x1
+ 176 0001 11       		.uleb128 0x11
+ 177 0002 01       		.byte	0x1
+ 178 0003 25       		.uleb128 0x25
+ 179 0004 0E       		.uleb128 0xe
+ 180 0005 13       		.uleb128 0x13
+ 181 0006 0B       		.uleb128 0xb
+ 182 0007 03       		.uleb128 0x3
+ 183 0008 0E       		.uleb128 0xe
+ 184 0009 1B       		.uleb128 0x1b
+ 185 000a 0E       		.uleb128 0xe
+ARM GAS  C:\Users\embedded\AppData\Local\Temp\ccyyUmh5.s 			page 5
+
+
+ 186 000b 11       		.uleb128 0x11
+ 187 000c 01       		.uleb128 0x1
+ 188 000d 12       		.uleb128 0x12
+ 189 000e 01       		.uleb128 0x1
+ 190 000f 10       		.uleb128 0x10
+ 191 0010 06       		.uleb128 0x6
+ 192 0011 00       		.byte	0
+ 193 0012 00       		.byte	0
+ 194 0013 02       		.uleb128 0x2
+ 195 0014 24       		.uleb128 0x24
+ 196 0015 00       		.byte	0
+ 197 0016 0B       		.uleb128 0xb
+ 198 0017 0B       		.uleb128 0xb
+ 199 0018 3E       		.uleb128 0x3e
+ 200 0019 0B       		.uleb128 0xb
+ 201 001a 03       		.uleb128 0x3
+ 202 001b 0E       		.uleb128 0xe
+ 203 001c 00       		.byte	0
+ 204 001d 00       		.byte	0
+ 205 001e 03       		.uleb128 0x3
+ 206 001f 24       		.uleb128 0x24
+ 207 0020 00       		.byte	0
+ 208 0021 0B       		.uleb128 0xb
+ 209 0022 0B       		.uleb128 0xb
+ 210 0023 3E       		.uleb128 0x3e
+ 211 0024 0B       		.uleb128 0xb
+ 212 0025 03       		.uleb128 0x3
+ 213 0026 08       		.uleb128 0x8
+ 214 0027 00       		.byte	0
+ 215 0028 00       		.byte	0
+ 216 0029 04       		.uleb128 0x4
+ 217 002a 34       		.uleb128 0x34
+ 218 002b 00       		.byte	0
+ 219 002c 03       		.uleb128 0x3
+ 220 002d 0E       		.uleb128 0xe
+ 221 002e 3A       		.uleb128 0x3a
+ 222 002f 0B       		.uleb128 0xb
+ 223 0030 3B       		.uleb128 0x3b
+ 224 0031 0B       		.uleb128 0xb
+ 225 0032 49       		.uleb128 0x49
+ 226 0033 13       		.uleb128 0x13
+ 227 0034 3F       		.uleb128 0x3f
+ 228 0035 0C       		.uleb128 0xc
+ 229 0036 02       		.uleb128 0x2
+ 230 0037 0A       		.uleb128 0xa
+ 231 0038 00       		.byte	0
+ 232 0039 00       		.byte	0
+ 233 003a 05       		.uleb128 0x5
+ 234 003b 2E       		.uleb128 0x2e
+ 235 003c 00       		.byte	0
+ 236 003d 3F       		.uleb128 0x3f
+ 237 003e 0C       		.uleb128 0xc
+ 238 003f 03       		.uleb128 0x3
+ 239 0040 0E       		.uleb128 0xe
+ 240 0041 3A       		.uleb128 0x3a
+ 241 0042 0B       		.uleb128 0xb
+ 242 0043 3B       		.uleb128 0x3b
+ARM GAS  C:\Users\embedded\AppData\Local\Temp\ccyyUmh5.s 			page 6
+
+
+ 243 0044 0B       		.uleb128 0xb
+ 244 0045 27       		.uleb128 0x27
+ 245 0046 0C       		.uleb128 0xc
+ 246 0047 11       		.uleb128 0x11
+ 247 0048 01       		.uleb128 0x1
+ 248 0049 12       		.uleb128 0x12
+ 249 004a 01       		.uleb128 0x1
+ 250 004b 40       		.uleb128 0x40
+ 251 004c 06       		.uleb128 0x6
+ 252 004d 9742     		.uleb128 0x2117
+ 253 004f 0C       		.uleb128 0xc
+ 254 0050 00       		.byte	0
+ 255 0051 00       		.byte	0
+ 256 0052 00       		.byte	0
+ 257              		.section	.debug_loc,"",%progbits
+ 258              	.Ldebug_loc0:
+ 259              	.LLST0:
+ 260 0000 00000000 		.4byte	.LFB0-.Ltext0
+ 261 0004 04000000 		.4byte	.LCFI0-.Ltext0
+ 262 0008 0200     		.2byte	0x2
+ 263 000a 7D       		.byte	0x7d
+ 264 000b 00       		.sleb128 0
+ 265 000c 04000000 		.4byte	.LCFI0-.Ltext0
+ 266 0010 08000000 		.4byte	.LCFI1-.Ltext0
+ 267 0014 0200     		.2byte	0x2
+ 268 0016 7D       		.byte	0x7d
+ 269 0017 0C       		.sleb128 12
+ 270 0018 08000000 		.4byte	.LCFI1-.Ltext0
+ 271 001c 8C000000 		.4byte	.LCFI2-.Ltext0
+ 272 0020 0200     		.2byte	0x2
+ 273 0022 7B       		.byte	0x7b
+ 274 0023 04       		.sleb128 4
+ 275 0024 8C000000 		.4byte	.LCFI2-.Ltext0
+ 276 0028 90000000 		.4byte	.LCFI3-.Ltext0
+ 277 002c 0200     		.2byte	0x2
+ 278 002e 7D       		.byte	0x7d
+ 279 002f 0C       		.sleb128 12
+ 280 0030 90000000 		.4byte	.LCFI3-.Ltext0
+ 281 0034 A8000000 		.4byte	.LFE0-.Ltext0
+ 282 0038 0200     		.2byte	0x2
+ 283 003a 7D       		.byte	0x7d
+ 284 003b 00       		.sleb128 0
+ 285 003c 00000000 		.4byte	0
+ 286 0040 00000000 		.4byte	0
+ 287              		.section	.debug_aranges,"",%progbits
+ 288 0000 1C000000 		.4byte	0x1c
+ 289 0004 0200     		.2byte	0x2
+ 290 0006 00000000 		.4byte	.Ldebug_info0
+ 291 000a 04       		.byte	0x4
+ 292 000b 00       		.byte	0
+ 293 000c 0000     		.2byte	0
+ 294 000e 0000     		.2byte	0
+ 295 0010 00000000 		.4byte	.Ltext0
+ 296 0014 A8000000 		.4byte	.Letext0-.Ltext0
+ 297 0018 00000000 		.4byte	0
+ 298 001c 00000000 		.4byte	0
+ 299              		.section	.debug_line,"",%progbits
+ARM GAS  C:\Users\embedded\AppData\Local\Temp\ccyyUmh5.s 			page 7
+
+
+ 300              	.Ldebug_line0:
+ 301 0000 53000000 		.section	.debug_str,"MS",%progbits,1
+ 301      02003500 
+ 301      00000201 
+ 301      FB0E0D00 
+ 301      01010101 
+ 302              	.LASF6:
+ 303 0000 6C6F6E67 		.ascii	"long long int\000"
+ 303      206C6F6E 
+ 303      6720696E 
+ 303      7400
+ 304              	.LASF11:
+ 305 000e 4952515F 		.ascii	"IRQ_Test\000"
+ 305      54657374 
+ 305      00
+ 306              	.LASF2:
+ 307 0017 756E7369 		.ascii	"unsigned int\000"
+ 307      676E6564 
+ 307      20696E74 
+ 307      00
+ 308              	.LASF3:
+ 309 0024 6C6F6E67 		.ascii	"long long unsigned int\000"
+ 309      206C6F6E 
+ 309      6720756E 
+ 309      7369676E 
+ 309      65642069 
+ 310              	.LASF7:
+ 311 003b 474E5520 		.ascii	"GNU C11 7.3.1 20180622 (release) [ARM/embedded-7-br"
+ 311      43313120 
+ 311      372E332E 
+ 311      31203230 
+ 311      31383036 
+ 312 006e 616E6368 		.ascii	"anch revision 261907] -mcpu=arm7tdmi -mthumb-interw"
+ 312      20726576 
+ 312      6973696F 
+ 312      6E203236 
+ 312      31393037 
+ 313 00a1 6F726B20 		.ascii	"ork -gdwarf-2 -O0\000"
+ 313      2D676477 
+ 313      6172662D 
+ 313      32202D4F 
+ 313      3000
+ 314              	.LASF0:
+ 315 00b3 756E7369 		.ascii	"unsigned char\000"
+ 315      676E6564 
+ 315      20636861 
+ 315      7200
+ 316              	.LASF5:
+ 317 00c1 73686F72 		.ascii	"short int\000"
+ 317      7420696E 
+ 317      7400
+ 318              	.LASF10:
+ 319 00cb 74696D65 		.ascii	"timeTwo\000"
+ 319      54776F00 
+ 320              	.LASF1:
+ 321 00d3 73686F72 		.ascii	"short unsigned int\000"
+ 321      7420756E 
+ARM GAS  C:\Users\embedded\AppData\Local\Temp\ccyyUmh5.s 			page 8
+
+
+ 321      7369676E 
+ 321      65642069 
+ 321      6E7400
+ 322              	.LASF4:
+ 323 00e6 7369676E 		.ascii	"signed char\000"
+ 323      65642063 
+ 323      68617200 
+ 324              	.LASF8:
+ 325 00f2 6972715F 		.ascii	"irq_handler.c\000"
+ 325      68616E64 
+ 325      6C65722E 
+ 325      6300
+ 326              	.LASF9:
+ 327 0100 433A5C45 		.ascii	"C:\\Embedded\\eclipse\\Demo\\2138\\irq\000"
+ 327      6D626564 
+ 327      6465645C 
+ 327      65636C69 
+ 327      7073655C 
+ 328              		.ident	"GCC: (GNU Tools for Arm Embedded Processors 7-2018-q2-update) 7.3.1 20180622 (release) [AR
+ARM GAS  C:\Users\embedded\AppData\Local\Temp\ccyyUmh5.s 			page 9
+
+
+DEFINED SYMBOLS
+                            *ABS*:00000000 irq_handler.c
+                            *COM*:00000004 timeTwo
+C:\Users\embedded\AppData\Local\Temp\ccyyUmh5.s:16     .text:00000000 $a
+C:\Users\embedded\AppData\Local\Temp\ccyyUmh5.s:22     .text:00000000 IRQ_Test
+C:\Users\embedded\AppData\Local\Temp\ccyyUmh5.s:97     .text:00000094 $d
+
+NO UNDEFINED SYMBOLS

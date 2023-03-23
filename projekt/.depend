@@ -1,0 +1,10 @@
+main.o: main.c startup/config.h startup/consol.h startup/lpc2xxx.h \
+ startup/printf_P.h startup/config.h startup/consol.h \
+ startup/printf_init.h Common_Def.h VIC.h general.h pca9532.h eeprom.h \
+ i2c.h irq/irq_handler.h lcd.h lcd_hw.h timer.h
+lcd.o: lcd.c lcd.h general.h ascii.h lcd_hw.h startup/lpc2xxx.h
+lcd_hw.o: lcd_hw.c startup/lpc2xxx.h lcd_hw.h general.h
+eeprom.o: eeprom.c general.h i2c.h
+i2c.o: i2c.c general.h i2c.h startup/lpc2xxx.h
+pca9532.o: pca9532.c general.h startup/lpc2xxx.h startup/printf_P.h \
+ startup/config.h startup/consol.h i2c.h eeprom.h pca9532.h
