@@ -87,18 +87,6 @@ int rand()
     rand_X = (rand_a * rand_X + rand_c) % rand_m;
     return rand_X;
 }
-void playSound(tU16 *data, tU32 delay, tU32 time, tU16 length)
-{
-    tU32 i = 0;
-    while (i < time)
-    {
-        DACR = (data[i % length] << 6);
-        i++;
-        delayMs(delay);
-        while (T0TC < delay)
-            ;
-    }
-}
 
 struct gracz
 {
