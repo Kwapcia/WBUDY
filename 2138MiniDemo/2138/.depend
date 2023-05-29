@@ -1,5 +1,0 @@
-main.o: main.c general.h startup/lpc2xxx.h startup/printf_P.h \
- startup/config.h startup/consol.h startup/printf_init.h startup/consol.h \
- startup/config.h irq/irq_handler.h timer.h VIC.h lcd.h Common_Def.h
-lcd.o: lcd.c lcd.h general.h ascii.h lcd_hw.h startup/lpc2xxx.h
-lcd_hw.o: lcd_hw.c startup/lpc2xxx.h lcd_hw.h general.h
