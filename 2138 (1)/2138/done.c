@@ -200,13 +200,13 @@ int main(void)
     		 int round_number = 0;
     		 long int time = 0;
     		 while(isGame){
-    			 int random_led_number = rand() % 4;
-    			 cos |= 1 << random_led_number + jakisoffset;
+    			 int random_number = rand() % 4;
+    			 cos |= 1 << random_number + jakisoffset;
     			 bool roundInProgress = true;
     			 while(roundInProgress){
     				 int choice = (IOPIN & 0x00001F00) >> 8;
     				 if(choice){
-    					 if(choice == 1<<random_led_number+1){
+    					 if(choice == 1<<random_number+1){
     						 // User selected correct input
     						 round_number += 1;
     						 roundInProgress = false;
@@ -221,7 +221,7 @@ int main(void)
     				 }
 
     			 }
-    			 cos &=(0 << random_led_number + jakisoffset);
+    			 cos &=(0 << random_number + jakisoffset);
 
     		 }
     	}

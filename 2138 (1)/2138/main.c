@@ -217,12 +217,12 @@ int game(struct gracz *gracz)
     {
         lcdGotoxy(10, 0);
         delayMs(1000);
-        int random_led_number = rand() % 4;
+        int random_number = rand() % 4;
         tBool roundInProgress = TRUE;
         while (roundInProgress)
         {
 
-            if (random_led_number == 0)
+            if (random_number == 0)
             {
                 lcdGotoxy(10, 0);
                 lcdPuts("       *       \n"
@@ -257,7 +257,7 @@ int game(struct gracz *gracz)
                 gracz->wynik -= i;
             }
 
-            else if (random_led_number == 1)
+            else if (random_number == 1)
             {
                 lcdGotoxy(10, 0);
                 lcdPuts("      *       \n"
@@ -291,7 +291,7 @@ int game(struct gracz *gracz)
                 }
                 gracz->wynik -= i;
             }
-            else if (random_led_number == 2)
+            else if (random_number == 2)
             {
                 lcdGotoxy(10, 0);
                 lcdPuts("      *       \n"
@@ -324,7 +324,7 @@ int game(struct gracz *gracz)
                 }
                 gracz->wynik -= i;
             }
-            else if (random_led_number == 3)
+            else if (random_number == 3)
             {
                 lcdGotoxy(10, 0);
                 lcdPuts("    ***       \n"

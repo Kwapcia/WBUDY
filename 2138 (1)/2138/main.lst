@@ -1293,7 +1293,7 @@ ARM GAS  C:\Users\embedded\AppData\Local\Temp\cc7vN7SN.s 			page 1
  915 0490 9B00     		lsls	r3, r3, #2
  916 0492 1800     		movs	r0, r3
  917 0494 FFF7FEFF 		bl	delayMs
- 232:main.c        ****         int random_led_number = rand() % 4;
+ 232:main.c        ****         int random_number = rand() % 4;
  918              		.loc 1 232 0
  919 0498 FFF7FEFF 		bl	rand
  920 049c 0200     		movs	r2, r0
@@ -1322,7 +1322,7 @@ ARM GAS  C:\Users\embedded\AppData\Local\Temp\cc7vN7SN.s 			page 1
 
 
  236:main.c        **** 
- 237:main.c        ****             if (random_led_number == 0)
+ 237:main.c        ****             if (random_number == 0)
  939              		.loc 1 237 0
  940 04ba BB68     		ldr	r3, [r7, #8]
  941 04bc 002B     		cmp	r3, #0
@@ -1457,7 +1457,7 @@ ARM GAS  C:\Users\embedded\AppData\Local\Temp\cc7vN7SN.s 			page 1
  1031              	.L42:
  270:main.c        ****             }
  271:main.c        **** 
- 272:main.c        ****             else if (random_led_number == 1)
+ 272:main.c        ****             else if (random_number == 1)
  1032              		.loc 1 272 0
  1033 054a BB68     		ldr	r3, [r7, #8]
  1034 054c 012B     		cmp	r3, #1
@@ -1591,7 +1591,7 @@ ARM GAS  C:\Users\embedded\AppData\Local\Temp\cc7vN7SN.s 			page 1
  1123 05d8 9DE0     		b	.L41
  1124              	.L47:
  305:main.c        ****             }
- 306:main.c        ****             else if (random_led_number == 2)
+ 306:main.c        ****             else if (random_number == 2)
  1125              		.loc 1 306 0
  1126 05da BB68     		ldr	r3, [r7, #8]
  1127 05dc 022B     		cmp	r3, #2
@@ -1742,7 +1742,7 @@ ARM GAS  C:\Users\embedded\AppData\Local\Temp\cc7vN7SN.s 			page 1
 
 
  338:main.c        ****             }
- 339:main.c        ****             else if (random_led_number == 3)
+ 339:main.c        ****             else if (random_number == 3)
  1233              		.loc 1 339 0
  1234 0688 BB68     		ldr	r3, [r7, #8]
  1235 068a 032B     		cmp	r3, #3
@@ -6532,7 +6532,7 @@ ARM GAS  C:\Users\embedded\AppData\Local\Temp\cc7vN7SN.s 			page 1
  5290 0521 64656C61 		.ascii	"delayMs\000"
  5290      794D7300 
  5291              	.LASF148:
- 5292 0529 72616E64 		.ascii	"random_led_number\000"
+ 5292 0529 72616E64 		.ascii	"random_number\000"
  5292      6F6D5F6C 
  5292      65645F6E 
  5292      756D6265 
