@@ -1,18 +1,18 @@
-/*************************************************************************************
+/*******************************************************************************
  *
- * @Description:
+ * @Description: Gra "Refleks" polegajaca na wychyleniu przez gracza joysticka
+ * we wskazaną przez strzalke na ekranie strone. Jedna gra sklada się z 10 rund, 
+ * a gracz na kazda reakcje ma 1 sekunde. Wynik to liczba obliczana jako roznica
+ * 10000 - punkty obliczony na podstawie czasu reakcji.
  *
- *
- * @Authors: Julia Pietrzykowska
- * Karolina Soltysiak
- * Aleksandra Kwapinska
+ * @Authors: Julia Pietrzykowska  242497
+ *           Karolina Soltysiak   242530
+ *           Aleksandra Kwapinska 242445
  *
  * @Change log:
- *           2023.01.06: Wersja oryginalna.
+ *           2023.05.31: Wersja finalna.
  *
  ******************************************************************************/
-
-// 200 lewo 400 gora 800 prawo 1000 dol 100 wglab
 
 #include "general.h"
 #include <lpc2xxx.h>
@@ -32,38 +32,35 @@
 #include "lcd_hw.h"
 #include <string.h>
 
-/************************************************************************
- * @Description: opóźnienie wyrażone w liczbie sekund
- * @Parameter:
- *    [in] seconds: liczba sekund opĂłĹşnienia
+/*************************************************************************
+ * @Description: Opóźnienie wyrażone w liczbie sekund
+ * @Parameter seconds:
+ *    [in] seconds: liczba sekund opoznienia
  * @Returns: Nic
  * @Side effects:
  *    przeprogramowany Timer #0
  *************************************************************************/
 void sdelay(tU32 seconds)
 {
-    T0TCR = TIMER_RESET;         // Zatrzymaj i zresetuj
-    T0PR = PERIPHERAL_CLOCK - 1; // jednostka w preskalerze
+    T0TCR = TIMER_RESET;        
+    T0PR = PERIPHERAL_CLOCK - 1; 
     T0MR0 = seconds;
-    T0IR = TIMER_ALL_INT; // Resetowanie flag przerwaĹ„
-    T0MCR = MR0_S;        // Licz do wartości w MR0 i zatrzymaj się
-    T0TCR = TIMER_RUN;    // Uruchom timer
-
-    // sprawdź czy timer działa
-    // nie ma wpisanego ogranicznika liczby pętli, ze względu na charakter procedury
+    T0IR = TIMER_ALL_INT; 
+    T0MCR = MR0_S;       
+    T0TCR = TIMER_RUN;   
     while (T0TCR & TIMER_RUN)
     {
     }
 }
 
-/**
- * @brief: Opoznienie wyrazone w liczbie milisekund
- * @param seconds:
- *      liczba milisekund opoznienia
- * @Returns: Nic
- * @attention:
- *    przeprogramowany Timer #1
- */
+ /*************************************************************************
+  * @Description: Opoznienie wyrazone w liczbie milisekund
+  * @Parameter delayInMs:
+  *    [in] miliseconds: liczba milisekund opoznienia
+  * @Returns: Nic
+  * @Side effects:
+  *    przeprogramowany Timer #1
+  *************************************************************************/
 void delayMs(tU16 delayInMs)
 {
     T1TCR = 0x02;
@@ -82,18 +79,37 @@ int rand_X = 23;
 int rand_m = 150;
 int rand_c = 43;
 int rand_a = 21;
+/*************************************************************************
+ * @Description: Funkcja do pseudolosowej liczby
+ * @Parameter: Brak
+ * @Returns: rand_X
+ *           liczba pseudolosowa
+ * @Side effects: Brak
+ *************************************************************************/
 int rand()
 {
     rand_X = (rand_a * rand_X + rand_c) % rand_m;
     return rand_X;
 }
 
+/*************************************************************************
+ * @Description: Struktura gracza
+ * @Parameter: Brak
+ * @Returns: Nic
+ * @Side effects: Brak
+ *************************************************************************/
 struct gracz
 {
     char name[12];
     int wynik;
 };
 
+/*************************************************************************
+ * @Description: Wpisywanie nazwy gracza za pomocą joysticka
+ * @Parameter gracz: struktura gracza
+ * @Returns: Nic
+ * @Side effects: Brak
+ *************************************************************************/
 void input_name(struct gracz *gracz)
 {
     gracz->name[0] = '\0';
@@ -206,6 +222,13 @@ void input_name(struct gracz *gracz)
     delayMs(2000);
 }
 
+/*************************************************************************
+ * @Description: Glowna funkcja gry, jej algorytm
+ * @Parameter gracz: struktura gracza
+ * @Returns: round_number
+ *           numer kolejnej rundy
+ * @Side effects: Brak
+ *************************************************************************/
 int game(struct gracz *gracz)
 {
 
@@ -260,7 +283,7 @@ int game(struct gracz *gracz)
             else if (random_number == 1)
             {
                 lcdGotoxy(10, 0);
-                lcdPuts("      *       \n"
+                lcdPuts("       *       \n"
                         "      ***      \n"
                         "    *******    \n"
                         "  ***********  \n"
@@ -294,7 +317,7 @@ int game(struct gracz *gracz)
             else if (random_number == 2)
             {
                 lcdGotoxy(10, 0);
-                lcdPuts("      *       \n"
+                lcdPuts("       *       \n"
                         "       **      \n"
                         "       ****    \n"
                         " ***********   \n"
@@ -327,7 +350,7 @@ int game(struct gracz *gracz)
             else if (random_number == 3)
             {
                 lcdGotoxy(10, 0);
-                lcdPuts("    ***       \n"
+                lcdPuts("     ***       \n"
                         "     ***       \n"
                         "     ***       \n"
                         "     ***       \n"
@@ -362,6 +385,12 @@ int game(struct gracz *gracz)
     return round_number;
 }
 
+/***************************************************************************
+ * @Description: Menu glowne 
+ * @Parameter: Brak
+ * @Returns 0, 1 lub 2: liczba calkowita ze zbioru [0, 2] oznaczajaca wybor
+ * @Side effects: Brak
+ ***************************************************************************/
 int choice()
 {
             lcdClrscr();
@@ -397,6 +426,12 @@ int choice()
         return 0;
 }
 
+/*************************************************************************
+ * @Description: Zaladowanie wyniku
+ * @Parameter highscore_gracz: struktura gracza
+ * @Returns: Nic
+ * @Side effects: Brak
+ *************************************************************************/
 void load_highscore_info(struct gracz *highscore_gracz)
 {
 
@@ -431,6 +466,13 @@ void load_highscore_info(struct gracz *highscore_gracz)
 
 }
 
+/*************************************************************************
+ * @Description: Zapis najwyzszego wyniku do pamieci
+ * @Parameter nowy_gracz: struktura gracza
+ * @Parameter highscore_gracz: struktura gracza 
+ * @Returns: Nic
+ * @Side effects: Brak
+ *************************************************************************/
 void save_highscore(struct gracz *nowy_gracz, struct gracz *highscore_gracz)
 {
 
@@ -465,6 +507,12 @@ void save_highscore(struct gracz *nowy_gracz, struct gracz *highscore_gracz)
 
 }
 
+/*************************************************************************
+ * @Description: Main, glowny algorytm
+ * @Parameter: Brak
+ * @Returns: Nic
+ * @Side effects: Brak
+ *************************************************************************/
 int main(void)
 {
     i2cInit();
